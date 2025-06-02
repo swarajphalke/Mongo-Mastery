@@ -1,0 +1,91 @@
+// Insert multiple documents into the 'students' collection
+db.students.insertMany([ 
+  { name: "Aditya Varnekar", subjects: ["Science"], score: 60, marks: 95 }, 
+  { name: "Riya", age: 20, marks: 85, subjects: ["Math", "History"] }, 
+  { name: "Aman", age: 24, marks: 65, subjects: ["English"] }, 
+  { name: "Pooja", age: 21, marks: 90, subjects: ["Chemistry"], lastUpdated: new Date() }
+])
+
+// Find and display all documents in the 'students' collection
+db.students.find()
+[
+  {
+    _id: ObjectId('683d53f167ba884984c73bf8'),
+    name: 'Aditya Varnekar',
+    subjects: [ 'Science' ],
+    score: 60,
+    marks: 95
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'English' ]
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Chemistry' ],
+    lastUpdated: ISODate('2025-06-02T07:34:09.409Z')
+  }
+]
+
+// Update 'subjects' array for student with name "Aman"
+db.students.updateOne(
+  { name: "Aman" }, 
+  { $set: { subjects: ["Marathi", "Japanese"] } }
+)
+
+
+// Correctly update 'status' field for students whose age is 22, 20, 24, or 21 in the correct collection 'students'
+db.students.updateMany(
+  { age: { $in: [22, 20, 24, 21] } },
+  { $set: { status: "Graduate" } }
+)
+
+// Find and display all documents to see the updates
+db.students.find()
+[
+  {
+    _id: ObjectId('683d53f167ba884984c73bf8'),
+    name: 'Aditya Varnekar',
+    subjects: [ 'Science' ],
+    score: 60,
+    marks: 95
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ],
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Marathi', 'Japanese' ],
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Chemistry' ],
+    lastUpdated: ISODate('2025-06-02T07:34:09.409Z'),
+    status: 'Graduate'
+  }
+]
