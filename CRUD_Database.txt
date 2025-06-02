@@ -1,0 +1,51 @@
+// Show all databases
+-> show dbs;
+
+// Switch to database 'batch1' (creates it if not exists)
+-> use batch1;
+
+// Show collections in current DB (none initially)
+-> show collections;
+
+// Create a new collection named 'users'
+-> db.createCollection("users");
+
+// Show updated list of databases
+-> show dbs;
+
+// Show collections again (should show 'users')
+-> show collections;
+
+// Insert one user document into 'users' collection
+-> db.users.insertOne({
+   name: "Alice",
+   age: 25,
+   email: "alice@example.com"
+});
+
+// Insert multiple user documents
+-> db.users.insertMany([
+   { name: "Bob", age: 30, email: "bob@example.com" },
+   { name: "Charlie", age: 28, email: "charlie@example.com" }
+]);
+
+// Insert more user documents
+-> db.users.insertMany([
+   { name: "Swaraj", age: 21, email: "swaraj@example.com" },
+   { name: "Aditya", age: 23, email: "aditya@example.com" }
+]);
+
+// Fetch all documents in the 'users' collection
+-> db.users.find();
+
+// Find documents where name is "Swaraj"
+-> db.users.find({ name: "Swaraj" });
+
+// Delete one document where name is "Aditya"
+-> db.users.deleteOne({ name: "Aditya" });
+
+// Delete all documents where age is 28
+-> db.users.deleteMany({ age: 28 });
+
+// Show remaining documents after deletions
+-> db.users.find();
