@@ -1,0 +1,87 @@
+
+# -> View all documents in the 'students' collection
+test> db.students.find()
+[
+  {
+    _id: ObjectId('683d53f167ba884984c73bf8'),
+    name: 'Aditya Varnekar',
+    subjects: [ 'Science' ],
+    score: 60,
+    marks: 95,
+    age: 22,
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ],
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Marathi', 'Japanese' ],
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Chemistry' ],
+    lastUpdated: ISODate('2025-06-02T07:34:09.409Z'),
+    status: 'Graduate'
+  }
+]
+
+
+# -> Find the first student document where the age is 22
+test> db.students.findOne({age:22})
+[
+  {
+    _id: ObjectId('683d53f167ba884984c73bf8'),
+    name: 'Aditya Varnekar',
+    subjects: [ 'Science' ],
+    score: 60,
+    marks: 95,
+    age: 22,
+    status: 'Graduate'
+  }
+]
+
+
+# -> Find all students whose age is greater than 20
+test> db.students.find({age: {$gt: 20}})
+[
+  {
+    _id: ObjectId('683d53f167ba884984c73bf8'),
+    name: 'Aditya Varnekar',
+    subjects: [ 'Science' ],
+    score: 60,
+    marks: 95,
+    age: 22,
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Marathi', 'Japanese' ],
+    status: 'Graduate'
+  },
+  {
+    _id: ObjectId('683d53f167ba884984c73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Chemistry' ],
+    lastUpdated: ISODate('2025-06-02T07:34:09.409Z'),
+    status: 'Graduate'
+  }
+]
+test>
