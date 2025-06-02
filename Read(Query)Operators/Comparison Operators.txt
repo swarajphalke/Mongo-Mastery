@@ -1,0 +1,204 @@
+test> use batch1
+switched to db batch1
+batch1> db.students.insertMany([
+...   {
+...     name: "Aditya",
+...     age: 22,
+...     marks: 75,
+...     subjects: ["English", "Science"]
+...   },
+...   {
+...     name: "Riya",
+...     age: 20,
+...     marks: 85,
+...     subjects: ["Math", "History"]
+...   },
+...   {
+...     name: "Aman",
+...     age: 24,
+...     marks: 65,
+...     subjects: ["Math", "English"]
+...   },
+...   {
+...     name: "Pooja",
+...     age: 21,
+...     marks: 90,
+...     subjects: ["Biology", "History"]
+...   }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('683d5d11bda45fc75fc73bf8'),
+    '1': ObjectId('683d5d11bda45fc75fc73bf9'),
+    '2': ObjectId('683d5d11bda45fc75fc73bfa'),
+    '3': ObjectId('683d5d11bda45fc75fc73bfb')
+  }
+}
+
+1.//$eq   --   equal
+
+batch1> db.students.find( {age: {$eq: 22}} )
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  }
+]
+
+
+2.//$ne    --  not equal
+
+batch1> db.students.find( {age: {$ne: 22}} )
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+3.//$gt   --   greater than
+
+batch1> db.students.find({age:{$gt: 21}})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  }
+]
+
+
+4.//$gte   --   greater than or equal
+
+batch1> db.students.find({age:{$gte: 21}})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+5.//$lt  --   less than
+
+batch1> db.students.find({age: {$lt:21}})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  }
+]
+
+
+6.//$lte     // less than or equal
+
+batch1> db.students.find({age: {$lte:21}})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+7.//$in   --   Match Any Value in an Array ( subjects contain either "Math" or "Science" )
+
+batch1> db.students.find({subjects: {$in: ["Math","Science"] } })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  }
+]
+
+
+8.// $nin – Does Not Match Any Value in an Array ( subjects do not contain "Math" or "Science" )
+
+batch1> db.students.find({subjects: {$nin: ["Math","Science"]}})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
