@@ -1,0 +1,138 @@
+test> use batch1
+switched to db batch1
+batch1> db.students.find()
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+1. $and – All conditions must be true
+
+batch1> 
+db.students.find({
+... $and: [
+... {age: {$gt: 20}},
+... {marks: {$gt: 80}}
+... ]
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+2. $or – At least one condition must be true
+
+batch1> 
+db.students.find({
+... $or: [
+... {age: 20},
+... {marks : {$gte: 75}}
+... ]
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+3. $nor – None of the conditions should be true
+
+batch1> 
+db.students.find({
+... $nor: [
+... {age: 20},
+... {marks: 90}
+... ]
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  }
+]
+
+
+4. $not – Negates a condition ( students whose age is NOT greater than 21 )
+
+batch1> db.students.find({
+... age: { $not: {$gt: 21} }
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+batch1>
