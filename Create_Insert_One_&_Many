@@ -1,0 +1,94 @@
+test> use batch1
+switched to db batch1
+
+
+
+1.Inserts a single document.
+
+batch1batch1> db.student.insertOne({name:"Aditya",Age:22,Course: "Computer"})
+{
+  acknowledged: true,
+  insertedId: ObjectId('683236962fa0df504a6c4bd0')
+}
+batch1batch1> db.student.find()
+[
+  {
+    _id: ObjectId('683236962fa0df504a6c4bd0'),
+    name: 'Aditya',
+    Age: 22,
+    Course: 'Computer'
+  }
+]
+
+
+
+2.Inserts multiple documents.
+
+batch1> db.students.insertMany([
+...   {
+...     name: "Aditya",
+...     age: 22,
+...     marks: 75,
+...     subjects: ["English", "Science"]
+...   },
+...   {
+...     name: "Riya",
+...     age: 20,
+...     marks: 85,
+...     subjects: ["Math", "History"]
+...   },
+...   {
+...     name: "Aman",
+...     age: 24,
+...     marks: 65,
+...     subjects: ["Math", "English"]
+...   },
+...   {
+...     name: "Pooja",
+...     age: 21,
+...     marks: 90,
+...     subjects: ["Biology", "History"]
+...   }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('683237022fa0df504a6c4bd2'),
+    '1': ObjectId('683237022fa0df504a6c4bd3'),
+    '2': ObjectId('683237022fa0df504a6c4bd4'),
+    '3': ObjectId('683237022fa0df504a6c4bd5')
+  }
+}
+batch1> db.students.find()
+[
+  { _id: ObjectId('683236df2fa0df504a6c4bd1') },
+  {
+    _id: ObjectId('683237022fa0df504a6c4bd2'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683237022fa0df504a6c4bd3'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683237022fa0df504a6c4bd4'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683237022fa0df504a6c4bd5'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
