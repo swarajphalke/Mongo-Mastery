@@ -1,0 +1,44 @@
+// Create a collection named "students"
+-> db.createCollection("students")
+
+// Insert multiple student documents into the "students" collection
+-> db.students.insertMany([
+  {
+    name: "Aditya Varnekar",
+    subjects: ["Science"],
+    score: 60,
+    marks: 95
+  },
+  {
+    name: "Riya",
+    age: 20,
+    marks: 85,
+    subjects: ["Math", "History"]
+  },
+  {
+    name: "Aman",
+    age: 24,
+    marks: 65,
+    subjects: ["English"]
+  },
+  {
+    name: "Pooja",
+    age: 21,
+    marks: 90,
+    subjects: ["Chemistry"],
+    lastUpdated: new Date()
+  }
+])
+
+// Delete one document where name is "Aman"
+-> db.students.deleteOne({ name: "Aman" })
+
+
+// Display all documents in the "students" collection
+-> db.students.find()
+
+// Delete all documents where marks are greater than 70
+-> db.students.deleteMany({ marks: { $gt: 70 } })
+
+// Display all remaining documents in the "students" collection
+-> db.students.find()
