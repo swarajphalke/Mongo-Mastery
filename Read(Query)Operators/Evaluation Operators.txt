@@ -1,0 +1,91 @@
+
+
+1. $regex – Pattern matching
+
+batch1> db.students.find({
+... name: {$regex: "^A", $options: "i" }
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  }
+]
+ 
+
+
+2. $expr – Compare fields inside document
+ 
+batch1> db.students.find({
+... $expr: {$gt: ["$marks","$age"]}
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+3.$mod – Modulo operation
+
+batch1> db.students.find({
+... age: {$mod: [2,0]}
+... })
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  }
+]
