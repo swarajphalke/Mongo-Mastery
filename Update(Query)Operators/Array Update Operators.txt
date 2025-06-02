@@ -1,0 +1,180 @@
+test> use batch1
+switched to db batch1
+batch1> db.students.find()
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 95
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ],
+    lastUpdated: ISODate('2025-06-02T13:10:40.017Z')
+  }
+]
+
+
+
+//1. $addToSet – Add value to array only if not present
+
+batch1> db.students.updateOne(
+... {name: "Swaraj"},
+... {$addToSet: {subjects: "Math"}}
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science', 'Math' ],
+    score: 95
+  }
+]
+ 
+ 
+ 
+//2. $pop – Remove first (-1) or last (1) element
+
+batch1> db.students.updateOne(
+... {name: "Pooja"},
+... {$pop: {subjects: -1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Pooja"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'History' ],
+    lastUpdated: ISODate('2025-06-02T13:10:40.017Z')
+  }
+]
+
+
+batch1> db.students.updateOne( { name: "Swaraj" }, { $pop: { subjects: 1 } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 95
+  }
+]
+
+
+
+//3. $pull – Remove matching value(s)
+
+batch1> db.students.updateOne(
+... {name:"Aman"},
+... {$pull: {subjects: "Math"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Aman"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'English' ]
+  }
+]
+
+
+
+//4. $push – Add value to end of array
+
+batch1> db.students.updateOne(
+... {name:"Swaraj"},
+... {$push: {subjects: "Chemistry"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science', 'Chemistry' ],
+    score: 95
+  }
+]
+
+
+
+//5. $pullAll – Remove all listed values
+
+batch1> db.students.updateOne(
+... {name:"Swaraj"},
+... {$pullAll: {subjects: ["Science","Chemistry"]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English' ],
+    score: 95
+  }
+]
+batch1>
+
+
+

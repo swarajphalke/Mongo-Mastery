@@ -1,0 +1,219 @@
+
+batch1> db.students.find()
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Aditya',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf9'),
+    name: 'Riya',
+    age: 20,
+    marks: 85,
+    subjects: [ 'Math', 'History' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfa'),
+    name: 'Aman',
+    age: 24,
+    marks: 65,
+    subjects: [ 'Math', 'English' ]
+  },
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ]
+  }
+]
+
+
+
+//1. $set – Set or update a field
+
+batch1> db.students.updateOne({name:"Aditya"},
+... {$set: { name:"Swaraj" } } )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    age: 22,
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  }
+]
+
+
+
+//2. $unset – Remove a field
+
+batch1> db.students.updateOne({name:"Swaraj"},
+... {$unset: {age: ""}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    marks: 75,
+    subjects: [ 'English', 'Science' ]
+  }
+]
+
+
+
+//3. $rename – Rename a field
+
+batch1> db.students.updateOne( {name:"Swaraj"},
+... {$rename: {"marks":"score"} } )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 75
+  }
+]
+
+
+
+//4. $inc – Increment a value
+
+batch1> db.students.updateOne( {name: "Swaraj"},
+... {$inc: {score: 5} } )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 80
+  }
+]
+
+
+
+//5. $mul – Multiply a value
+
+batch1> db.students.updateOne( {name:"Swaraj"},
+... {$mul: {score: 2}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 160
+  }
+]
+
+
+
+//6. $currentDate – Set current date/time
+
+batch1> db.students.updateOne( {name:"Pooja"},
+... {$currentDate: {lastUpdated: true}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Pooja"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bfb'),
+    name: 'Pooja',
+    age: 21,
+    marks: 90,
+    subjects: [ 'Biology', 'History' ],
+    lastUpdated: ISODate('2025-06-02T13:10:40.017Z')
+  }
+]
+
+
+
+//7. $min – Set only if the new value is less than the current value
+
+batch1> db.students.updateOne( {name:"Swaraj"},
+... {$min: {score: 60}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 60
+  }
+]
+
+
+
+//8. $max – Set only if the new value is greater than the current value
+
+batch1> db.students.updateOne( {name: "Swaraj"},
+... {$max: {score: 95}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+batch1> db.students.find({name:"Swaraj"})
+[
+  {
+    _id: ObjectId('683d5d11bda45fc75fc73bf8'),
+    name: 'Swaraj',
+    subjects: [ 'English', 'Science' ],
+    score: 95
+  }
+]
