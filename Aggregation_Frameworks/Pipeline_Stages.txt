@@ -1,0 +1,194 @@
+batch1> db.sales.find()
+[
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bf8'),
+    item: 'Pen',
+    price: 10,
+    quantity: 5,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bf9'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 10,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfa'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 3,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfb'),
+    item: 'Pen',
+    price: 10,
+    quantity: 2,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfc'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 8,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfd'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 4,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfe'),
+    item: 'Pen',
+    price: 10,
+    quantity: 7,
+    region: 'East'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bff'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 6,
+    region: 'East'
+  }
+]
+
+
+
+//1. Adding $match Before $group
+// Only group sales in the "North" region
+
+batch1> db.sales.aggregate([
+{ $match: { region: "North" } }, 
+{ $group: { _id: "$item", totalQty:{$sum:"$quantity" }}}
+])
+[
+  { _id: 'Pencil', totalQty: 18 },
+  { _id: 'Pen', totalQty: 5 },
+  { _id: 'Notebook', totalQty: 4 }
+]
+
+//Explanation:
+-$match: Filter only documents where region is "North".
+-$group: Group by item, and sum up the quantity.
+
+
+//2. Combining $group with $project
+//Use $project to reshape the grouped output.
+
+batch1> db.sales.aggregate([
+... {$group: {_id: "$item", total:{$sum: "$quantity"}, avg:{$avg: "$quantity"} } },
+... {$project : {itemName: "$_id", total:1, avg:1, _id:0} }
+... ])
+[
+  { total: 24, avg: 8, itemName: 'Pencil' },
+  { total: 14, avg: 4.666666666666667, itemName: 'Pen' },
+  { total: 7, avg: 3.5, itemName: 'Notebook' }
+]
+
+//Explanation:
+-$group: Group by item. Get total and average of quantity.
+-$project: Rename _id to itemName and hide the _id.
+
+
+//3. Sorting with $sort Before/After Grouping
+// Sort before grouping affects first/last
+
+batch1> db.sales.aggregate([
+... {$sort: {quantity: -1}},
+... {$group: {_id:"$item", firstQty:{$first: "$quantity"}}}
+... ])
+[
+  { _id: 'Pencil', firstQty: 10 },
+  { _id: 'Pen', firstQty: 7 },
+  { _id: 'Notebook', firstQty: 4 }
+]
+
+//Explanation:
+-$sort: Sort documents by quantity in descending order.
+-$group: For each item, take the first document (after sorting) and return its quantity.
+
+
+
+//4. Limiting Results with $limit
+
+batch1> db.sales.aggregate([
+... {$group: {_id: "$item", total:{$sum: "$quantity"}}},
+... {$sort: {total: -1}},
+... {$limit: 2}
+... ])
+[ { _id: 'Pencil', total: 24 }, { _id: 'Pen', total: 14 } ]
+ 
+//Explanation:
+-Group and get total quantity for each item.
+-Sort by total in descending order.
+-Limit to top 2 items only.
+
+
+
+
+//5. Using $unwind to Flatten Arrays Before Grouping
+
+batch1> db.sales.aggregate([
+... {$unwind: "$item"},
+... {$group: {_id: "$item", count:{$sum:1}}}
+... ])
+[
+  { _id: 'Pen', count: 3 },
+  { _id: 'Pencil', count: 3 },
+  { _id: 'Notebook', count: 2 }
+]
+
+batch1> db.students.aggregate([
+... {$unwind: "$subjects"},
+... {$group: {_id:"$subjects", count: {$sum: 1}}}
+... ])
+[
+  { _id: 'Math', count: 1 },
+  { _id: 'English', count: 2 },
+  { _id: 'History', count: 2 }
+]
+
+//Explanation:
+-$unwind breaks an array field (e.g., tags) into multiple documents (one per array element).
+-Then you can group and count how often each tag appears.
+
+
+
+
+//6. Add Fields After Grouping Using $addFields
+
+batch1> db.sales.aggregate([
+... {$group: {_id: "$item", totalQty: {$sum:"$quantity"}}},
+... {$addFields: {label:"Summary"}}
+... ])
+[
+  { _id: 'Pen', totalQty: 14, label: 'Summary' },
+  { _id: 'Pencil', totalQty: 24, label: 'Summary' },
+  { _id: 'Notebook', totalQty: 7, label: 'Summary' }
+]
+
+//Explanation:
+-Group data by item and sum quantity.
+-Add a new field called label with value "Summary" to each result.
+
+
+
+
+//7.match After Grouping
+//Filtering Aggregated Data Using $match After Grouping
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", totalQty:{$sum: "$quantity" }}},
+... {$match: {totalQty: {$gte: 10}}}
+... ])
+[ { _id: 'Pencil', totalQty: 24 }, { _id: 'Pen', totalQty: 14 } ]
+
+//Explanation:
+-Group and calculate total quantity per item.
+-Filter the result to include only those with totalQty >= 10

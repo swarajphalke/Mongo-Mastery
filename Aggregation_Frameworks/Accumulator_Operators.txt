@@ -1,0 +1,174 @@
+batch1> db.sales.find()
+[
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bf8'),
+    item: 'Pen',
+    price: 10,
+    quantity: 5,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bf9'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 10,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfa'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 3,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfb'),
+    item: 'Pen',
+    price: 10,
+    quantity: 2,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfc'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 8,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfd'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 4,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bfe'),
+    item: 'Pen',
+    price: 10,
+    quantity: 7,
+    region: 'East'
+  },
+  {
+    _id: ObjectId('683dafff06e5e8b80ac73bff'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 6,
+    region: 'East'
+  }
+]
+
+// Accumulator Operators - Aggregate Functions (used in $group)
+
+
+//1. 💰 Total Quantity Sold by Item ($sum)
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", totalQty:{$sum:"$quantity"}}}
+... ])
+[
+  { _id: 'Pencil', totalQty: 24 },
+  { _id: 'Pen', totalQty: 14 },
+  { _id: 'Notebook', totalQty: 7 }
+]
+
+
+
+//2. 📊 Average Quantity Sold per Item ($avg)
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", totalAvg:{$avg:"$quantity"}}}
+... ])
+[
+  { _id: 'Pencil', totalAvg: 8 },
+  { _id: 'Pen', totalAvg: 4.666666666666667 },
+  { _id: 'Notebook', totalAvg: 3.5 }
+]
+
+
+
+
+//3. 📉 Minimum and Maximum Quantity ($min / $max)
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", minQty:{$min: "$quantity"}}}
+... ])
+[
+  { _id: 'Pen', minQty: 2 },
+  { _id: 'Notebook', minQty: 3 },
+  { _id: 'Pencil', minQty: 6 }
+]
+ 
+batch1> db.sales.aggregate([
+... { $group: { _id: "$item", maxQty: { $max: "$quantity" } } }
+... ])
+[
+  { _id: 'Pencil', maxQty: 10 },
+  { _id: 'Pen', maxQty: 7 },
+  { _id: 'Notebook', maxQty: 4 }
+]
+
+
+
+
+//4. 🥇 First and Last Entry by Item ($first / $last)
+
+batch1> db.sales.aggregate([
+... {$sort: {quantity: 1}},
+... {$group: {
+... _id: "$item",
+... firstSaleQty: {$first: "$quantity"},
+... lastSaleQty: {$last: "$quantity"}
+... } }
+... ])
+[
+  { _id: 'Notebook', firstSaleQty: 3, lastSaleQty: 4 },
+  { _id: 'Pencil', firstSaleQty: 6, lastSaleQty: 10 },
+  { _id: 'Pen', firstSaleQty: 2, lastSaleQty: 7 }
+]
+
+
+
+//5. 📦 Push All Region Names by Item ($push)
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", regions:{$push: "$region"}}}
+... ])
+[
+  { _id: 'Pen', regions: [ 'North', 'South', 'East' ] },
+  { _id: 'Pencil', regions: [ 'North', 'North', 'East' ] },
+  { _id: 'Notebook', regions: [ 'South', 'North' ] }
+]
+
+
+
+
+//6. 🧩 Unique Regions per Item ($addToSet)
+
+batch1> db.sales.aggregate([
+... {$group: {_id: "$item", uniqueRegions:{$addToSet: "$region"}}}
+... ])
+[
+  { _id: 'Pencil', uniqueRegions: [ 'East', 'North' ] },
+  { _id: 'Pen', uniqueRegions: [ 'South', 'East', 'North' ] },
+  { _id: 'Notebook', uniqueRegions: [ 'South', 'North' ] }
+]
+
+
+
+
+//7. 📈 Standard Deviation of Quantity ($stdDevPop / $stdDevSamp)
+
+batch1> db.sales.aggregate([
+... {$group: {_id:"$item", stdDevPop:{$stdDevPop:"$quantity"},
+... stdDevSamp:{$stdDevSamp: "$quantity"} } }
+... ])
+[
+  { _id: 'Pencil', stdDevPop: 1.632993161855452, stdDevSamp: 2 },
+  {
+    _id: 'Pen',
+    stdDevPop: 2.0548046676563256,
+    stdDevSamp: 2.516611478423583
+  },
+  { _id: 'Notebook', stdDevPop: 0.5, stdDevSamp: 0.7071067811865476 }
+]
