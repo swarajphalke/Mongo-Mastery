@@ -1,0 +1,256 @@
+mydatabases> db.sales.insertMany([
+   { item: "Pen",      price: 10, quantity: 5,  region: "North" },
+   { item: "Pencil",   price: 5,  quantity: 10, region: "North" },
+   { item: "Notebook", price: 50, quantity: 3,  region: "South" },
+   { item: "Pen",      price: 10, quantity: 2,  region: "South" },
+   { item: "Pencil",   price: 5,  quantity: 8,  region: "North" },
+   { item: "Notebook", price: 50, quantity: 4,  region: "North" },
+   { item: "Pen",      price: 10, quantity: 7,  region: "East" },
+   { item: "Pencil",   price: 5,  quantity: 6,  region: "East" }
+ ])
+...
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6834e8ce32f3087e566c4bd0'),
+    '1': ObjectId('6834e8ce32f3087e566c4bd1'),
+    '2': ObjectId('6834e8ce32f3087e566c4bd2'),
+    '3': ObjectId('6834e8ce32f3087e566c4bd3'),
+    '4': ObjectId('6834e8ce32f3087e566c4bd4'),
+    '5': ObjectId('6834e8ce32f3087e566c4bd5'),
+    '6': ObjectId('6834e8ce32f3087e566c4bd6'),
+    '7': ObjectId('6834e8ce32f3087e566c4bd7')
+  }
+}
+mydatabases> db.sales.find()
+[
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd0'),
+    item: 'Pen',
+    price: 10,
+    quantity: 5,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd1'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 10,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd2'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 3,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd3'),
+    item: 'Pen',
+    price: 10,
+    quantity: 2,
+    region: 'South'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd4'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 8,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd5'),
+    item: 'Notebook',
+    price: 50,
+    quantity: 4,
+    region: 'North'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd6'),
+    item: 'Pen',
+    price: 10,
+    quantity: 7,
+    region: 'East'
+  },
+  {
+    _id: ObjectId('6834e8ce32f3087e566c4bd7'),
+    item: 'Pencil',
+    price: 5,
+    quantity: 6,
+    region: 'East'
+  }
+]
+
+
+
+
+// Accumulator Operators (used in $group)
+
+
+//1. 💰 Total Quantity Sold by Item ($sum)
+
+mydatabases> db.sales.aggregate([{$group:{_id:"$item",totalQuantity:{$sum:"$quantity"}}}])
+[
+  { _id: 'Pencil', totalQuantity: 24 },
+  { _id: 'Pen', totalQuantity: 14 },
+  { _id: 'Notebook', totalQuantity: 7 }
+]
+
+
+
+//2. 📊 Average Quantity Sold per Item ($avg)
+
+mydatabases> db.sales.aggregate([{$group:{_id:"$item",AverageQuantity:{$avg:"$quantity"}}}])
+[
+  { _id: 'Pen', AverageQuantity: 4.666666666666667 },
+  { _id: 'Notebook', AverageQuantity: 3.5 },
+  { _id: 'Pencil', AverageQuantity: 8 }
+]
+
+
+//3. 📉 Minimum and Maximum Quantity ($min / $max)
+
+mydatabases> db.sales.aggregate([{$group:{_id:"$item",MinQty:{$min:$quantity}}}])
+ReferenceError: $quantity is not defined
+mydatabases> db.sales.aggregate([{$group:{_id:"$item",MinQty:{$min:"$quantity"}}}])
+[
+  { _id: 'Pen', MinQty: 2 },
+  { _id: 'Notebook', MinQty: 3 },
+  { _id: 'Pencil', MinQty: 6 }
+]
+mydatabases> db.sales.aggregate([{$group:{_id:"$item",MaxQty:{$max:"$quantity"}}}])
+[
+  { _id: 'Pen', MaxQty: 7 },
+  { _id: 'Notebook', MaxQty: 4 },
+  { _id: 'Pencil', MaxQty: 10 }
+]
+
+
+
+//4. 🥇 First and Last Entry by Item ($first / $last)
+
+mydatabases> db.sales.aggregate([
+...   { $sort: { quantity: 1 } },
+...   { $group: {
+...       _id: "$item",
+...       firstSaleQty: { $first: "$quantity" },
+...       lastSaleQty: { $last: "$quantity" }
+...     }
+...   }
+... ])
+...
+[
+  { _id: 'Notebook', firstSaleQty: 3, lastSaleQty: 4 },
+  { _id: 'Pencil', firstSaleQty: 6, lastSaleQty: 10 },
+  { _id: 'Pen', firstSaleQty: 2, lastSaleQty: 7 }
+]
+
+
+------------------------------------------------------------------------------------------------------------------------------
+//5. 📦 Push All Region Names by Item ($push)
+
+mydatabases> db.sales.aggregate([
+...   { $group: { _id: "$item", regions: { $push: "$region" } } }
+... ])
+...
+[
+  { _id: 'Pen', regions: [ 'North', 'South', 'East' ] },
+  { _id: 'Notebook', regions: [ 'South', 'North' ] },
+  { _id: 'Pencil', regions: [ 'North', 'North', 'East' ] }
+]
+
+
+
+//6. 🧩 Unique Regions per Item ($addToSet)
+
+mydatabases> db.sales.aggregate([
+...   { $group: { _id: "$item", uniqueRegions: { $addToSet: "$region" } } }
+... ])
+...
+[
+  { _id: 'Pencil', uniqueRegions: [ 'North', 'East' ] },
+  { _id: 'Notebook', uniqueRegions: [ 'North', 'South' ] },
+  { _id: 'Pen', uniqueRegions: [ 'North', 'East', 'South' ] }
+]
+
+
+
+//7. 📈 Standard Deviation of Quantity ($stdDevPop / $stdDevSamp)
+
+mydatabases> db.sales.aggregate([
+...   { $group: {
+...       _id: "$item",
+...       stdDevPop: { $stdDevPop: "$quantity" },
+...       stdDevSamp: { $stdDevSamp: "$quantity" }
+...     }
+...   }
+... ])
+...
+[
+  {
+    _id: 'Pen',
+    stdDevPop: 2.0548046676563256,
+    stdDevSamp: 2.516611478423583
+  },
+  { _id: 'Notebook', stdDevPop: 0.5, stdDevSamp: 0.7071067811865476 },
+  { _id: 'Pencil', stdDevPop: 1.632993161855452, stdDevSamp: 2 }
+
+]
+mydatabases> ***********more are remaining*****************
+
+➤ Stages (Start with $)
+json
+Copy code
+$match
+$project
+$group
+$sort
+$limit
+$skip
+$unwind
+$lookup             // joins
+$out                // write result to a collection
+$merge              // merges output to collection
+$count
+$facet
+$bucket
+$bucketAuto
+$addFields
+$replaceRoot
+$replaceWith
+$set
+$unset
+
+
+➤ Expression Operators
+➤ Arithmetic
+
+$add, $subtract, $multiply, $divide, $mod
+
+➤ String
+
+$concat, $substr, $toLower, $toUpper, $trim,
+$ltrim, $rtrim, $strLenCP, $split, $indexOfBytes
+
+➤ Date
+
+$year, $month, $week, $dayOfYear, $dayOfMonth, $dayOfWeek,
+$hour, $minute, $second, $millisecond, $dateToString
+
+➤ Conditional
+
+$cond, $ifNull, $switch
+
+➤ Type Conversion
+
+$toString, $toInt, $toDouble, $toBool, $toDecimal,
+$convert, $type, $isNumber
+
+➤ Comparison (used in aggregation)
+
+$eq, $ne, $gt, $gte, $lt, $lte, $cmp
+
+➤ Array Operators
+
+$size, $filter, $map, $reduce, $concatArrays, $isArray
