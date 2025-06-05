@@ -51,8 +51,7 @@ You can go through each .txt file based on your learning or project requirement.
 
 Feel free to clone or fork the repo:
 ```bash
-git clone https://github.com/swarajphalke/Mongo-Mastery.git
-```bash
+git clone https://github.com/swarajphalke/Mongo-Mastery.git```
 
 ---
 
