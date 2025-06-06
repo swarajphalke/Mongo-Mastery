@@ -1,5 +1,6 @@
 test> use batch1
 switched to db batch1
+
 batch1> db.students.insertMany([
 ...   {
 ...     name: "Aditya",
