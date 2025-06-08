@@ -1,6 +1,7 @@
 // Show all databases
 -> show dbs;
 
+
 // Switch to database 'batch1' (creates it if not exists)
 -> use batch1;
 
