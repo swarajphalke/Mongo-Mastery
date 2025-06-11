@@ -21,7 +21,6 @@ batch1> db.employees.insertMany(
 
 
 //1. Create Index on name (Ascending)
-
 batch1> db.employees.createIndex({name:1})
 name_1
 
