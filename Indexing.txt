@@ -7,7 +7,6 @@ batch1> db.employees.insertMany(
 ...   { empId: 105, name: "Eva", department: "HR", salary: 55000, city: "Bangalore" }
 ... ]
 ... )
-
 {
   acknowledged: true,
   insertedIds: {
